@@ -11,5 +11,5 @@ For Merge PDF, Output is written to **merged** Folder
 
 impose sign on PDF's, Output is written to **signedOut** Folder
 
-**python3 imposeImgV2.py **
+**python3 imposeImgV2.py**
 
