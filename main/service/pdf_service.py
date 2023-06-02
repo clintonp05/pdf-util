@@ -1,4 +1,3 @@
-from fpdf import FPDF
 import PyPDF2
 from PyPDF2 import PdfReader, PdfWriter
 from reportlab.lib.pagesizes import letter
@@ -8,35 +7,37 @@ import fitz
 import os
 
 
-def createTestPDF():
-    # Directory path to store the generated PDF files
-    output_directory = '../../assets/output/'
+dirname = os.path.dirname(__file__)
 
-    # Create the output directory if it doesn't exist
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
+# def createTestPDF():
+#     # Directory path to store the generated PDF files
+#     output_directory = '../../assets/output/'
 
-    # Generate 50 PDF files with 4 pages each
-    for i in range(50):
-        # Create a new PDF file
-        output_file = os.path.join(output_directory, f'file0{i+1}.pdf')
-        pdf = FPDF()
+#     # Create the output directory if it doesn't exist
+#     if not os.path.exists(output_directory):
+#         os.makedirs(output_directory)
 
-        # Generate 4 pages for the PDF file
-        for page_num in range(4):
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt=f"This is page {page_num+1} of file{i+1}.pdf", ln=True)
+#     # Generate 50 PDF files with 4 pages each
+#     for i in range(50):
+#         # Create a new PDF file
+#         output_file = os.path.join(output_directory, f'file0{i+1}.pdf')
+#         pdf = FPDF()
 
-        # Write the PDF file to the output directory
-        pdf.output(output_file)
+#         # Generate 4 pages for the PDF file
+#         for page_num in range(4):
+#             pdf.add_page()
+#             pdf.set_font("Arial", size=12)
+#             pdf.cell(200, 10, txt=f"This is page {page_num+1} of file{i+1}.pdf", ln=True)
 
-    print("PDF files generated successfully.")
+#         # Write the PDF file to the output directory
+#         pdf.output(output_file)
+
+#     print("PDF files generated successfully.")
 
 def mergePDF():
     
     # Directory path containing the PDF files
-    pdf_directory = '/Users/clinton/Learning/POC/python-test/assets/output/'
+    pdf_directory = os.path.join(dirname, '../../assets/output/')
 
     # List to store PDF file paths
     pdf_files = []
@@ -58,7 +59,15 @@ def mergePDF():
             pdf_merger.append(file)
 
     # Output file path for the merged PDF
-    output_file = '/Users/clinton/Learning/POC/python-test/assets/merged/merged.pdf'
+    output_file = os.path.join(dirname, '../../assets/merged/merged.pdf')
+
+    #not deleting by if file exists to skip avoid caching issues by os to have more realtime file info
+    #file exists works by metadata file which is provided by os on cachings
+    try:
+        if(os.path.exists(output_file)):
+            os.remove(output_file)
+    except OSError as error:
+        print(error)
 
     # Write the merged PDF to the output file
     with open(output_file, 'wb') as file:
@@ -66,16 +75,17 @@ def mergePDF():
 
     pdf_merger.close()
     print(f'{len(pdf_files)} PDF files merged into {output_file}.')
+    return output_file
 
 def imposeImg():
     # Path to the input PDF file
-    input_file = '../../merged/merged.pdf'
+    input_file = '../../assets/merged/merged.pdf'
 
     # Path to the image file
-    image_file = '../../signature.jpg'
+    image_file = '../../assets/signature.jpg'
 
     # Path for the output PDF file
-    output_file = '../../signedOut/signedDoc.pdf'
+    output_file = '../../assets/signedOut/signedDoc.pdf'
 
     # Open the input PDF file
     pdf_reader = PdfReader(input_file)
@@ -123,17 +133,25 @@ def imposeImg():
 def imposeImgV2():
 
     # Path to the input PDF file
-    input_file = '../../merged/merged.pdf'
+    input_file = os.path.join(dirname, '../../assets/merged/merged.pdf')
 
     # Path to the image file
-    image_file = '../../signature.png'
-    image_file_1 = '../../signature-1.png'
-    image_file_2 = '../../signature.png'
-    image_file_3 = '../../signature-1.png'
-    stamp = '../../stamp.png'
+    image_file = os.path.join(dirname, '../../assets//signature.png')
+    image_file_1 = os.path.join(dirname, '../../assets/signature-1.png')
+    image_file_2 = os.path.join(dirname, '../../assets/signature.png')
+    image_file_3 = os.path.join(dirname, '../../assets/signature-1.png')
+    stamp = os.path.join(dirname, '../../assets/stamp.png')
 
     # Path for the output PDF file
-    output_file = '../../signedOut/signedDoc.pdf'
+    output_file = os.path.join(dirname, '../../assets/signedOut/signedDoc.pdf')
+
+    #not deleting by if file exists to skip avoid caching issues by os to have more realtime file info
+    #file exists works by metadata file which is provided by os on cachings
+    try:
+        if(os.path.exists(output_file)):
+            os.remove(output_file)
+    except OSError as error:
+        print(error)    
 
     # Open the input PDF file
     pdf_doc = fitz.open(input_file)
@@ -164,3 +182,4 @@ def imposeImgV2():
     pdf_doc.close()
 
     print(f'Image superimposed in each page of the PDF: {output_file}')
+    return output_file
