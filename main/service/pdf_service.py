@@ -6,7 +6,7 @@ from reportlab.pdfgen import canvas
 import fitz
 import os
 
-
+EOF_MARKER="%%EOF"
 dirname = os.path.dirname(__file__)
 
 # def createTestPDF():
@@ -72,7 +72,7 @@ def mergePDF():
     # Write the merged PDF to the output file
     with open(output_file, 'wb') as file:
         pdf_merger.write(file)
-
+    pdf_merge.write(EOF_MARKER)
     pdf_merger.close()
     print(f'{len(pdf_files)} PDF files merged into {output_file}.')
     return output_file
